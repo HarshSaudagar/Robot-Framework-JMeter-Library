@@ -40,7 +40,7 @@ class JMeterKeywords(object):
         """
         JMeterRunner(jmeterPath, testPlanPath, logFilePath, otherParams)
 
-    def runJmeterAnalyseJtlConvert(self, jmeterPath, testPlanPath, logFilePath, otherParams="", disableReports=None):
+    def runJmeterAnalyseJtlConvert(self, jmeterPath, testPlanPath, logFilePath, otherParams="", disableReports=0):
         """
         Runs JMeter and parses log file. Converts results into HTML and SQLite format.
         Returns list of dictionaries containing summary report of parsed output.
@@ -216,8 +216,12 @@ class JMeterRunner(object):
 
     def listOtherParams(self):
         self.params = []
+        print("paramsStr")
+        print(self.paramsStr)
         if not self.paramsStr == "":
-            self.params = string.split(self.paramsStr)
+            self.params = str.split(self.paramsStr)
+            print("params")
+            print(self.params)
 
     def runAndPrintResult(self):
         import subprocess
@@ -241,7 +245,7 @@ class JMeterLibException(Exception):
          return repr(self.msg)
 
 class LogAnalysisInitiator(object):
-    def __init__(self, filePath, createSqlReport=False, createHtmlReport=False, disableReports=None):
+    def __init__(self, filePath, createSqlReport=False, createHtmlReport=False, disableReports=0):
         debugNeeded = False
         self.jtlPath = filePath
         self.timeStamp = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
@@ -295,7 +299,7 @@ class LogAnalysisInitiator(object):
                 raise JMeterLibException("Incorrect log file format")
         return newObject
 
-    def convertLogToHtml(self, disableReports=None):
+    def convertLogToHtml(self, disableReports=0):
         self.lc = LogConverterHtml(self, disableReports=disableReports)
         self.lc.createNewHtmlPath()
         self.lc.createHtml(disableReports)
@@ -758,7 +762,7 @@ class AggregatedSummary(object):
         return self.assertionPassRate
 
     def addAverageTime(self, t):
-        if isinstance(t, str) or isinstance(t, unicode):
+        if isinstance(t, str):
             t = int(t)
         self.averageTime += t
 
@@ -888,7 +892,7 @@ class AggregatedSamples(AggregatedSummary):
         return self.throughput
 
     def addAverageBytes(self, b):
-        if isinstance(b, str) or isinstance(b, unicode):
+        if isinstance(b, str):
             b = int(b)
         self.averageBytes = self.averageBytes + b
         self.addBytesPerSec(b)
@@ -1222,7 +1226,7 @@ class LogConverterHtml(object):
 
     def createHtml(self, disableReports):
         tableOfSamples = self.loganalyser.samples
-        if isinstance(disableReports, unicode):
+        if isinstance(disableReports, str):
             disableReports = int(disableReports)
         if not isinstance(disableReports, int):
             disableReports = 0
@@ -1887,7 +1891,7 @@ Website: http://sourceforge.net/projects/rf-jmeter-py/
         }
 
     def customizeNaviBar(self, reportOptions):
-        if isinstance(reportOptions, unicode):
+        if isinstance(reportOptions, str):
             reportOptions = int(reportOptions)
         if not isinstance(reportOptions, int):
             reportOptions = 0
